@@ -1,19 +1,35 @@
 package com.monki.util;
 
+import java.awt.*;
+
 public class Position {
     private int i;
     private int j;
+    private Color color;
     public Position(int i, int j) {
         this.i = i;
         this.j = j;
     }
 
+    public Position(int i, int j, Color color) {
+        this.i = i;
+        this.j = j;
+        this.color = color;
+    }
     public int getI() {
         return i;
     }
 
     public int getJ() {
         return j;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     @Override
