@@ -19,16 +19,16 @@ public class MyPaint {
     public void drawIndex(Graphics g) {
         char[] alphabet={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S'};
         g.setColor(Color.BLACK);
-        g.setFont(new Font("Default", Font.PLAIN, 30));
+        g.setFont(new Font("Default", Font.PLAIN, 15));
         for (int i = 0; i < 19; i++) {
-            g.drawString("" + alphabet[i], Config.X - Config.SPACE / 4 + Config.SPACE * i, Config.Y);
-            g.drawString("" + (i + 1), Config.X - Config.SPACE, Config.Y + Config.SPACE / 4 + Config.SPACE * i);
+            g.drawString("" + alphabet[i], Config.X -Config.SPACE/8+ Config.SPACE * i, Config.Y-Config.SPACE/8);
+            g.drawString("" + (i + 1), Config.X - Config.SPACE/2, Config.Y + Config.SPACE / 8 + Config.SPACE * i);
         }
     }
     public void drawLines(Graphics g) {
         //棋盘绘制
         g.setColor(new Color(242, 210, 17));
-        g.fillRect(X,Y,LENGTH,LENGTH);
+        g.fillRect(X-SPACE/2,Y-SPACE/2,LENGTH+SPACE,LENGTH+SPACE);
         g.setColor(Color.BLUE);
         //g.drawLine(X,Y+SPACE,X+LENGTH,Y+SPACE);
         //g.drawLine(X+SPACE,Y,X+SPACE,Y+LENGTH);
