@@ -31,7 +31,6 @@ public class MyFrame extends JFrame {
 
         public MyFrame(String title){
             MyPanel myPanel = new MyPanel();
-
             //frame
             add(myPanel);
             setTitle(title);

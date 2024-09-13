@@ -1,8 +1,10 @@
 package com.monki.util;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class Position {
+public class Position implements Serializable {
+    static final long serialVersionUID = 2L;
     private int i;
     private int j;
     private Color color;

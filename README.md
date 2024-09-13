@@ -21,7 +21,8 @@ UI java awt
 # 目录结构
 
 - draw 用于界面的绘制
-  - MyFrame 控制界面监听
+  - MyFrame 绘制窗口
+  - Mypanel 绘制棋盘，控制事件监听
   - Mypaint 绘制围棋相关
 - socket 用于实现网络通信
 - util工具类

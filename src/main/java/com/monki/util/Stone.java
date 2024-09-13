@@ -1,8 +1,10 @@
 package com.monki.util;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class Stone {
+public class Stone implements Serializable {
+    static final long serialVersionUID = 1L;
     private Position position;//棋子坐标
     private Color color;//棋子颜色
     private int count;//手数

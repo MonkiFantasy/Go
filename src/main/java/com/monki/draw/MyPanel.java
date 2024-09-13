@@ -26,37 +26,50 @@ public class MyPanel extends JPanel {
 
 
     public MyPanel(){
+        setLayout(null);
+        setBounds(0,0,1920,1080);
         JButton dialog = new JButton("进入连接界面");
         dialog.setFont(new Font("宋体", Font.PLAIN, 20));
         dialog.setBounds(X,Y+LENGTH+SPACE,SPACE*4,SPACE);
+        setDoubleBuffered(true);
         add(dialog);
         //mouse listener
-        addMouseListener(new MyMouseListener());
 
 
+        setBackground(Color.gray);addMouseListener(new MyMouseListener());
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                if(e.getX()>=X-SPACE/2&&e.getY()>=Y-SPACE/2&&e.getX()<=X+LENGTH+SPACE/2&&e.getY()<=Y+LENGTH+SPACE/2){
+                if(isInBoard(e.getX(),e.getY())){
                     mouseOn= Calculator.getIndexViaMouse(e.getX(),e.getY());
                     mouseOn=Calculator.getPositionViaIndex(mouseOn.getI(),mouseOn.getJ());
-                    //repaint();
+                    repaint();
+                    //repaint(mouseOn.getI()- Config.SPACE/2,mouseOn.getJ()-Config.SPACE/2,SPACE,SPACE);
                 }
             }
         });
-        setLayout(null);
-        setBounds(0,0,1920,1080);
-        setBackground(Color.gray);
+
+        dialog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog jDialog = new JDialog();
+                jDialog.setBounds(0,0,500,500);
+                //jDialog.setModal(true);//模态会导致落子异常卡顿
+                jDialog.setVisible(true);
+            }
+        });
         setVisible(true);
     }
     @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        //Graphics2D g = (Graphics2D) gh;
+    public void paintComponent(Graphics gh) {
+        super.paintComponent(gh);
+        Graphics2D g = (Graphics2D) gh;
         //棋盘绘制
         myPaint.drawLines(g);
         myPaint.drawIndex(g);
         myPaint.drawStars(g);
+        //Image image = new ImageIcon("img/1.png").getImage();
+        //g.drawImage(image,0,0,this.getWidth(),this.getHeight(),this);
 
 
         //实现落子高亮效果
@@ -74,28 +87,38 @@ public class MyPanel extends JPanel {
             }
         }
     }
+    // 辅助方法，检查鼠标是否在棋盘区域内
+
+    private boolean isInBoard(int x, int y) {
+
+        return x >= X - Config.SPACE / 2 && x <= X + LENGTH + Config.SPACE / 2
+
+                && y >= Y - Config.SPACE / 2 && y <= Y + LENGTH + Config.SPACE / 2;
+
+    }
     private class MyMouseListener extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
 
-            System.out.println("-----------------------------------------------------------------");
+            e.getButton();
+           /* System.out.println("-----------------------------------------------------------------");
             Position position = Calculator.getIndexViaMouse(e.getX(), e.getY());
             System.out.println("position:"+position);
             Position pos = Calculator.getPositionViaIndex(position.getI(), position.getJ());
             System.out.println("pos:"+pos);
             System.out.println("实际点击坐标"+e.getX()+" "+e.getY());
-            //System.out.println(e.getXOnScreen()+" "+e.getYOnScreen());
-            //frame.setLocation(e.getX(),e.getY());
-            System.out.println("-----------------------------------------------------------------");
 
-            if(e.getX()>=X-SPACE/2&&e.getY()>=Y-SPACE/2&&e.getX()<=X+LENGTH+SPACE/2&&e.getY()<=Y+LENGTH+SPACE/2){
+            System.out.println("-----------------------------------------------------------------");*/
+
+            if(isInBoard(e.getX(),e.getY())){
                 Position p = Calculator.getIndexViaMouse(e.getX(),e.getY());
                 Position position1 = Calculator.getPositionViaIndex(p.getI(), p.getJ());
                 Stone stone = new Stone(count, turn == -1 ? Color.BLACK : Color.WHITE, position1);
                 turn=-turn;
                 count++;
                 fallOn.add(stone);
-                repaint();
+                //只重绘棋子附近的方形，以提高性能
+                repaint(position1.getI()-Config.SPACE/2,position1.getJ()-Config.SPACE/2,SPACE*2,SPACE*2);
                 System.out.println(stone.toString());
             }
 
