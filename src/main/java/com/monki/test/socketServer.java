@@ -1,6 +1,6 @@
 package com.monki.test;
 
-import com.monki.util.Stone;
+import com.monki.entity.Stone;
 
 import java.io.IOException;
 import java.io.InputStream;

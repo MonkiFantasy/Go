@@ -1,18 +1,13 @@
 package com.monki.draw;
 
-import com.monki.util.Calculator;
 import com.monki.util.Config;
-import com.monki.util.Position;
-import com.monki.util.Stone;
+import com.monki.entity.Position;
+import com.monki.entity.Stone;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-import static com.monki.draw.MyPaint.SPACE;
 
 public class MyFrame extends JFrame {
 
@@ -25,23 +20,22 @@ public class MyFrame extends JFrame {
     public static MyPaint myPaint = new MyPaint();
     public static Position mouseOn=null;//鼠标指针距离最近交叉点坐标
     public static List<Stone> fallOn=new ArrayList<>();//已落子的信息
-    public static int turn=-1;//-1黑 1白
-    public static int count=1;//对弈手数
-    public static int[][] board=new int[PATH+1][PATH+1];
+
 
         public MyFrame(String title){
-            MyPanel myPanel = new MyPanel();
-            //frame
-            add(myPanel);
-            setTitle(title);
-            setLayout(null);
-            setBounds(0,0,1920,1080);
-            setBackground(Color.gray);
-            setVisible(true);
+            initFrame(title);
         }
 
-
-
+    private void initFrame(String title) {
+        MyPanel myPanel = new MyPanel();
+        //frame
+        add(myPanel);
+        setTitle(title);
+        setLayout(null);
+        setBounds(0,0,1920,1080);
+        setBackground(Color.gray);
+        setVisible(true);
+    }
 
 
 }

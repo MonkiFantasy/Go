@@ -2,12 +2,10 @@ package com.monki.draw;
 
 import com.monki.util.Calculator;
 import com.monki.util.Config;
-import com.monki.util.Position;
-import com.monki.util.Stone;
+import com.monki.entity.Position;
+import com.monki.entity.Stone;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MyPaint {
     public static final int X= Config.X;//棋盘左上角顶点x坐标
@@ -43,28 +41,28 @@ public class MyPaint {
     public void drawStars(Graphics g) {
 
         //星位绘制
-        Position position = Calculator.getPositionViaIndex(4, 4);
+        Position position = Calculator.getCoordinateViaIndex(4, 4);
         g.fillOval(position.getI()-SPACE/10,position.getJ()-SPACE/10,SPACE/5,SPACE/5);
-        position = Calculator.getPositionViaIndex(10, 4);
+        position = Calculator.getCoordinateViaIndex(10, 4);
         g.fillOval(position.getI()-SPACE/10,position.getJ()-SPACE/10,SPACE/5,SPACE/5);
-        position = Calculator.getPositionViaIndex(16, 4);
+        position = Calculator.getCoordinateViaIndex(16, 4);
         g.fillOval(position.getI()-SPACE/10,position.getJ()-SPACE/10,SPACE/5,SPACE/5);
-        position = Calculator.getPositionViaIndex(4, 10);
+        position = Calculator.getCoordinateViaIndex(4, 10);
         g.fillOval(position.getI()-SPACE/10,position.getJ()-SPACE/10,SPACE/5,SPACE/5);
-        position = Calculator.getPositionViaIndex(10, 10);
+        position = Calculator.getCoordinateViaIndex(10, 10);
         g.fillOval(position.getI()-SPACE/10,position.getJ()-SPACE/10,SPACE/5,SPACE/5);
-        position = Calculator.getPositionViaIndex(16, 10);
+        position = Calculator.getCoordinateViaIndex(16, 10);
         g.fillOval(position.getI()-SPACE/10,position.getJ()-SPACE/10,SPACE/5,SPACE/5);
-        position = Calculator.getPositionViaIndex(4, 16);
+        position = Calculator.getCoordinateViaIndex(4, 16);
         g.fillOval(position.getI()-SPACE/10,position.getJ()-SPACE/10,SPACE/5,SPACE/5);
-        position = Calculator.getPositionViaIndex(10, 16);
+        position = Calculator.getCoordinateViaIndex(10, 16);
         g.fillOval(position.getI()-SPACE/10,position.getJ()-SPACE/10,SPACE/5,SPACE/5);
-        position = Calculator.getPositionViaIndex(16, 16);
+        position = Calculator.getCoordinateViaIndex(16, 16);
         g.fillOval(position.getI()-SPACE/10,position.getJ()-SPACE/10,SPACE/5,SPACE/5);
     }
     public void drawStone(Graphics g, Stone stone) {
         g.setColor(stone.getColor());
-        g.fillOval(stone.getPosition().getI()-Config.SPACE/2,stone.getPosition().getJ()-Config.SPACE/2,SPACE,SPACE);
+        g.fillOval(stone.getCoordinate().getI()-Config.SPACE/2,stone.getCoordinate().getJ()-Config.SPACE/2,SPACE,SPACE);
     }
 
 
