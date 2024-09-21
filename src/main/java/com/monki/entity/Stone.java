@@ -117,7 +117,11 @@ public class Stone implements Serializable {
         }*//*
 
     }*/
+    //TODO：检查前重置上次的气结果
     public void checkLiberty(){
+
+        //更新气，不是只添加，只添加会造成下次检查气时保留上次的结果
+        setLiberty(new HashSet<>());
         int i = index.getJ();
         int j = index.getI();
         Position up=new Position(i-1,j);
@@ -142,7 +146,7 @@ public class Stone implements Serializable {
     private boolean checkBoardState(Position index, int state) {
         return isOnBoard(index)&&Board.state[index.getI()][index.getJ()]==state;
     }
-
+    //判断当前位置是否在棋盘上
     private boolean isOnBoard(Position index) {
         return index.getI()>=1&&index.getI()<=19&&index.getJ()>=1&&index.getJ()<=19;
     }
@@ -150,15 +154,14 @@ public class Stone implements Serializable {
 
     @Override
     public String toString() {
-        return "Stone{" +
-                "count=" + count +
-                ", color=" + color +
-                ", coordinate=" + coordinate +
-                ", index=" + index +
-                ", myString=" + myString +
-                ", \nliberty=" + liberty +
-                ", isRemoved=" + isRemoved +
-                '}';
+        String player =color==Color.BLACK?"黑":"白";
+        return "棋子{" +count+
+                ", 对局方=" + player+
+                ", 图形学坐标=" + index +
+                ", 属于的棋串=" + myString +
+                ", \n剩余气数=" + liberty +
+                ", 是否被提=" + isRemoved +
+                '}'+"\n";
     }
 
 }

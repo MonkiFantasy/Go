@@ -61,7 +61,7 @@ int[][] air_black=new int[PATH+1][PATH+1];
 - 登录
 - 教学模式
 - 聊天
-- 定时器
+- 记时器
 
 ## 项目结构
 

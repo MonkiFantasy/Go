@@ -29,4 +29,46 @@ public class Calculator {
                 && y >= Config.Y - Config.SPACE / 2 && y <= Config.Y + Config.LENGTH + Config.SPACE / 2;
 
     }
+    public static boolean areArraysEqual(int[][] array1, int[][] array2) {
+        if (array1 == null && array2 == null) {
+            return true;
+        }
+        if (array1 == null || array2 == null || array1.length != array2.length) {
+            return false;
+        }
+
+        for (int i = 0; i < array1.length; i++) {
+            if (array1[i] == null && array2[i] == null) {
+                continue;
+            }
+            if (array1[i] == null || array2[i] == null || array1[i].length != array2[i].length) {
+                return false;
+            }
+            for (int j = 0; j < array1[i].length; j++) {
+                if (array1[i][j] != array2[i][j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public static int[][] deepCopy(int[][] original) {
+        if (original == null) {
+            return null;
+        }
+
+        int rows = original.length;
+        int[][] copy = new int[rows][];
+
+        for (int i = 0; i < rows; i++) {
+            if (original[i] != null) {
+                int cols = original[i].length;
+                copy[i] = new int[cols];
+                System.arraycopy(original[i], 0, copy[i], 0, cols);
+            }
+        }
+
+        return copy;
+    }
+
 }

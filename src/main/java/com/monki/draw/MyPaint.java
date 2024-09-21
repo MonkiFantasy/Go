@@ -60,9 +60,28 @@ public class MyPaint {
         position = Calculator.getCoordinateViaIndex(16, 16);
         g.fillOval(position.getI()-SPACE/10,position.getJ()-SPACE/10,SPACE/5,SPACE/5);
     }
-    public void drawStone(Graphics g, Stone stone) {
-        g.setColor(stone.getColor());
+    public void drawStone(Graphics2D g, Stone stone) {
+        //圆形绘制设置抗锯齿渲染
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Color[] whiteGradient = {Color.WHITE, Color.LIGHT_GRAY};
+        Color[] blackGradient = {Color.LIGHT_GRAY,Color.BLACK};
+        //设置渐变画笔
+        RadialGradientPaint p = new RadialGradientPaint(
+                stone.getCoordinate().getI()- (float) SPACE /6,stone.getCoordinate().getJ()- (float) SPACE /6 , (float) SPACE /3 ,
+                new float[]{0.0f, 1.0f},
+                stone.getColor()==Color.BLACK?blackGradient:whiteGradient,
+                RadialGradientPaint.CycleMethod.NO_CYCLE
+
+        );
+        g.setPaint(p);
         g.fillOval(stone.getCoordinate().getI()-Config.SPACE/2,stone.getCoordinate().getJ()-Config.SPACE/2,SPACE,SPACE);
+
+    }
+    public void drawLiberty(Graphics g, Position index) {
+        //g.setColor(stone.getColor());
+        index=Calculator.getCoordinateViaIndex(index.getJ(), index.getI());
+        g.fillOval(index.getI()-Config.SPACE/4,index.getJ()-Config.SPACE/4,SPACE/2,SPACE/2);
+
     }
 
 

@@ -1,11 +1,13 @@
 package com.monki.core;
 
+import com.monki.draw.MyPanel;
 import com.monki.entity.Position;
 import com.monki.entity.Stone;
 import com.monki.util.Config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class Board {
 
@@ -14,13 +16,12 @@ public class Board {
     public static int[][] liberty=new int[Config.PATH+1][Config.PATH+1];//棋盘上的棋子的气数
     public static List<StoneString> blackString=new ArrayList<>();
     public static List<StoneString> whiteString=new ArrayList<>();
-    public static List<String> history=new ArrayList<>();//棋盘历史状态
+    public static List<int[][]> history=new ArrayList<>();//棋盘历史状态
 
     //根据当前落子的坐标，判断上下左右的敌方棋串是否气为0,返回需要被移除的棋串
     public static List<StoneString> getStonesToRemove(Position index,int player) {
         int i = index.getJ();
         int j = index.getI();
-
         Position up=new Position(i-1,j);
         Position down=new Position(i+1,j);
         Position left=new Position(i,j-1);
@@ -30,17 +31,17 @@ public class Board {
         if(isOppositeStringDeath(up,player)){
             stringlist.add(getStoneStringByIndex(up));
         }
-        else if (isOppositeStringDeath(down,player)){
+        if (isOppositeStringDeath(down,player)){
             stringlist.add(getStoneStringByIndex(down));
         }
-        else if(isOppositeStringDeath(left,player)){
+        if(isOppositeStringDeath(left,player)){
             stringlist.add(getStoneStringByIndex(left));
         }
-        else if (isOppositeStringDeath(right,player)){
+        if (isOppositeStringDeath(right,player)){
             stringlist.add(getStoneStringByIndex(right));
-        }else{
-            stringlist=null;
         }
+            //stringlist=null;
+
         return stringlist;
     }
 
@@ -71,34 +72,45 @@ public class Board {
             mergedString.addStone(stone);
             mergedString.addStones(u.getStones());
             boolean b = player == -1 ? blackString.remove(u) : whiteString.remove(u);
-        } else if (existStone(down,player)) {
+        }
+        if (existStone(down,player)) {
             StoneString d = getStoneStringByIndex(down);
             mergedString.addStone(stone);
             mergedString.addStones(d.getStones());
             boolean b = player == -1 ? whiteString.remove(d) : blackString.remove(d);
-        } else if (existStone(left,player)) {
+        }
+        if (existStone(left,player)) {
             StoneString l = getStoneStringByIndex(left);
             mergedString.addStone(stone);
             mergedString.addStones(l.getStones());
             boolean b = player == -1 ? whiteString.remove(l) : blackString.remove(l);
-        } else if (existStone(right,player)) {
+        }
+        if (existStone(right,player)) {
             StoneString r = getStoneStringByIndex(right);
             mergedString.addStone(stone);
             mergedString.addStones(r.getStones());
             boolean b = player == -1 ? whiteString.remove(r) : blackString.remove(r);
-        }else {
-            mergedString.addStone(stone);
         }
+        mergedString.addStone(stone);
+
 
         //更新当前stone所在的棋串
         stones[i][j].setMyString(mergedString);
+        MyPanel.fallOn.add(stone);
+        //todo:更新当前串前面棋子所在的串
+        Set<Stone> stonesOfString = mergedString.getStones();
+        for (Stone stoneOfString : stonesOfString) {
+            stoneOfString.setMyString(mergedString);
+            MyPanel.fallOn.set(stoneOfString.getCount()-1,stoneOfString);
+        }
+        //MyPanel.fallOn
         //存入对应list
         if (player==-1){
             blackString.add(mergedString);
         } else if (player==1) {
             whiteString.add(mergedString);
         }
-        //TODO：有就连接作为一个新的串，并从list中删除被连接的串
+
     }
     public static Boolean existStone(Position index,int player){
         return isOnBoard(index)&&state[index.getI()][index.getJ()]==player;

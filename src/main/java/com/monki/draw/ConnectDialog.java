@@ -38,6 +38,7 @@ public class ConnectDialog extends JDialog {
         tf_port = new JTextField();
         JLabel lb_port = new JLabel();
         bt_connect = new JButton("点击连接");
+        bt_connect.setFont(new Font("宋体", Font.BOLD, 15));
         bt_connect.setBounds(50,80,100,30);
         lb_ip.setBounds(20,20,20,20);
         lb_ip.setText("ip:");
@@ -47,7 +48,7 @@ public class ConnectDialog extends JDialog {
         lb_port.setText("port:");
         tf_port.setBackground(Color.gray);
         tf_port.setBounds(220,20,100,50);
-        jDialog.setBounds(0,0,500,500);
+        jDialog.setBounds(500,500,500,500);
         jDialog.setModal(true);//模态会导致落子异常卡顿
 
         jDialog.add(tf_ip);
