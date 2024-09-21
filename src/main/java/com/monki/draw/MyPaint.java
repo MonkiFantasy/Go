@@ -25,7 +25,8 @@ public class MyPaint {
     }
     public void drawLines(Graphics g) {
         //棋盘绘制
-        g.setColor(new Color(242, 210, 17));
+        //g.setColor(new Color(242, 210, 17));
+        g.setColor(Color.WHITE);
         g.fillRect(X-SPACE/2,Y-SPACE/2,LENGTH+SPACE,LENGTH+SPACE);
         g.setColor(Color.BLUE);
         //g.drawLine(X,Y+SPACE,X+LENGTH,Y+SPACE);

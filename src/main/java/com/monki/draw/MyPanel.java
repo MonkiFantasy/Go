@@ -9,10 +9,12 @@ import com.monki.entity.Stone;
 import com.monki.util.MyLogger;
 
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,19 +38,10 @@ public class MyPanel extends JPanel {
     //private static Stone[][] stones=Board.stones;//存放棋盘上落得子
     private JButton dialog;
     private  JButton musicPlayer;
+    private JPanel textPanel;
+    private JTextArea text;
     private static Clip clip;
-    public void initMusic(){
 
-        try {
-            System.out.println("当前工作目录：" + System.getProperty("user.dir"));
-
-            AudioInputStream bgm = AudioSystem.getAudioInputStream(this.getClass().getResourceAsStream("/music/弈.wav"));
-            clip = AudioSystem.getClip();
-            clip.open(bgm);
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
 
     public MyPanel() {
         initMusic();
@@ -61,7 +54,13 @@ public class MyPanel extends JPanel {
     public void paintComponent(Graphics gh) {
         super.paintComponent(gh);
         Graphics2D g = (Graphics2D) gh;
-
+        //background
+        try {
+            Image image = ImageIO.read(getClass().getResource("/img/img.png"));
+            g.drawImage(image,0,0,getWidth(),getHeight(),this);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         //棋盘绘制
         myPaint.drawLines(g);
         myPaint.drawIndex(g);
@@ -132,6 +131,8 @@ public class MyPanel extends JPanel {
                     //TODO：添加当前棋盘状态到history
                     //System.out.println(Board.state.toString());
                     Board.history.add(Calculator.deepCopy(Board.state));
+
+                    text.setText("当前落子方："+(turn==-1?"白":"黑"));
                     //轮次更新
                     turn = -turn;//更新当前棋手
                     count++;//落子手数增加
@@ -430,20 +431,36 @@ public class MyPanel extends JPanel {
         setLayout(null);
         setBounds(0, 0, 1920, 1080);
         setBackground(Color.gray);
-        dialog = new JButton("进入连接界面");
-        dialog.setFocusPainted(false);
-        dialog.setFont(new Font("宋体", Font.PLAIN, 20));
-        dialog.setBounds(X+LENGTH + SPACE, Y , SPACE * 4, SPACE);
-        musicPlayer = new JButton("背景音乐：关");
-        musicPlayer.setFocusPainted(false);
-        musicPlayer.setFont(new Font("宋体", Font.PLAIN, 20));
-        musicPlayer.setBounds(X + SPACE +LENGTH, Y+SPACE*2, SPACE * 4, SPACE);
+        dialog = new MyButton("进入连接界面");
+        dialog.setBounds(X+LENGTH + SPACE, Y , SPACE * 5, (int) (SPACE*1.2));
+        //textPanel = new BackgroundPanel("/img/img_button.png");
+        textPanel = new JPanel();
+        textPanel.setOpaque(true);
+        textPanel.setBorder(BorderFactory.createLineBorder(Color.blue));
+        textPanel.setBounds(X + LENGTH+SPACE, Y+SPACE*4, SPACE * 10, SPACE*12);
+        text = new JTextArea();
+        text.setBounds(X + LENGTH+SPACE, Y+SPACE*4, SPACE * 10, SPACE*12);
+        text.setText("执黑先行");
+        text.setFont(new Font("宋体", Font.BOLD, 20));
+        musicPlayer = new MyButton("背景音乐：关");
+        musicPlayer.setBounds(X + SPACE +LENGTH, Y+SPACE*2, SPACE * 5, (int) (SPACE*1.2));
         setDoubleBuffered(true);
         add(dialog);
         add(musicPlayer);
+        textPanel.add(text);
+        add(textPanel);
         setVisible(true);
     }
-
+    public void initMusic(){
+        try {
+            System.out.println("当前工作目录：" + System.getProperty("user.dir"));
+            AudioInputStream bgm = AudioSystem.getAudioInputStream(this.getClass().getResourceAsStream("/music/弈.wav"));
+            clip = AudioSystem.getClip();
+            clip.open(bgm);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
     private void initListener() {
         //鼠标点击监听（落子监听）
         addMouseListener(new MyMouseListener());
@@ -466,12 +483,9 @@ public class MyPanel extends JPanel {
             }
         });
         musicPlayer.addActionListener(new ActionListener() {
-
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 JButton source =(JButton) e.getSource();
-
                 if (source.getText().equals("背景音乐：开")) {
                     clip.stop();
                     source.setText("背景音乐：关");
