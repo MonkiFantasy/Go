@@ -433,13 +433,17 @@ public class MyPanel extends JPanel {
         setBackground(Color.gray);
         dialog = new MyButton("进入连接界面");
         dialog.setBounds(X+LENGTH + SPACE, Y , SPACE * 5, (int) (SPACE*1.2));
-        //textPanel = new BackgroundPanel("/img/img_button.png");
-        textPanel = new JPanel();
-        textPanel.setOpaque(true);
+        textPanel = new BackgroundPanel("/img/img_1.png");
+        textPanel.setToolTipText("15351");
+        //textPanel = new JPanel();
+        //textPanel.setOpaque(true);
         textPanel.setBorder(BorderFactory.createLineBorder(Color.blue));
         textPanel.setBounds(X + LENGTH+SPACE, Y+SPACE*4, SPACE * 10, SPACE*12);
         text = new JTextArea();
-        text.setBounds(X + LENGTH+SPACE, Y+SPACE*4, SPACE * 10, SPACE*12);
+        //text.setBounds(X + LENGTH+SPACE, Y+SPACE*4, SPACE * 10, SPACE*12);
+        //透明背景
+        text.setBackground(new Color(0, 0, 0, 0));
+        //text.setOpaque(true);
         text.setText("执黑先行");
         text.setFont(new Font("宋体", Font.BOLD, 20));
         musicPlayer = new MyButton("背景音乐：关");
@@ -488,10 +492,12 @@ public class MyPanel extends JPanel {
                 JButton source =(JButton) e.getSource();
                 if (source.getText().equals("背景音乐：开")) {
                     clip.stop();
+                    source.setToolTipText("点击播放");
                     source.setText("背景音乐：关");
                 }else if (source.getText().equals("背景音乐：关")){
                     clip.start();
                     source.setText("背景音乐：开");
+                    source.setToolTipText("点击暂停");
                 }
             }
         });

@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class Main {
     public static void main(String[] args) {
         //Logger logger = Logger.getLogger("MyLogger");
-        new MyFrame("弈");
+        new MyFrame("奇弈围棋");
         //new WarningDialog("sfdsf");
     }
 }

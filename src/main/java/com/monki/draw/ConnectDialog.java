@@ -31,6 +31,7 @@ public class ConnectDialog extends JDialog {
     }
 
     private void initDialog() {
+        setTitle("连接服务器");
         setContentPane(new BackgroundPanel("/img/img_button.png"));
 
         setLayout(null);
