@@ -3,10 +3,12 @@ package com.monki.core;
 import com.monki.entity.Position;
 import com.monki.entity.Stone;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class StoneString {
-    private enum player{white,black};//棋串属于哪一方
+public class StoneString implements Serializable {
+    private static final long serialVersionUID = 3L;
+    //private enum player{white,black};//棋串属于哪一方
     private int liberty;//气的数量
     private Set<Stone> stones=new HashSet<>();//当前棋串的棋子
     private Set<Position> libertyPos=new HashSet<>();//当前气的位置

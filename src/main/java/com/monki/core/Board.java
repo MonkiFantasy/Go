@@ -13,7 +13,7 @@ public class Board {
 
     public static Stone[][] stones=new Stone[Config.PATH+1][Config.PATH+1];//存放棋盘上落得子
     public static int[][] state=new int[Config.PATH+1][Config.PATH+1];//棋盘上落子的状态 -1黑 1白 0空
-    public static int[][] liberty=new int[Config.PATH+1][Config.PATH+1];//棋盘上的棋子的气数
+    //public static int[][] liberty=new int[Config.PATH+1][Config.PATH+1];//棋盘上的棋子的气数
     public static List<StoneString> blackString=new ArrayList<>();
     public static List<StoneString> whiteString=new ArrayList<>();
     public static List<int[][]> history=new ArrayList<>();//棋盘历史状态
@@ -27,22 +27,22 @@ public class Board {
         Position left=new Position(i,j-1);
         Position right=new Position(i,j+1);
 
-        ArrayList<StoneString> stringlist = new ArrayList<>();
+        ArrayList<StoneString> stringList = new ArrayList<>();
         if(isOppositeStringDeath(up,player)){
-            stringlist.add(getStoneStringByIndex(up));
+            stringList.add(getStoneStringByIndex(up));
         }
         if (isOppositeStringDeath(down,player)){
-            stringlist.add(getStoneStringByIndex(down));
+            stringList.add(getStoneStringByIndex(down));
         }
         if(isOppositeStringDeath(left,player)){
-            stringlist.add(getStoneStringByIndex(left));
+            stringList.add(getStoneStringByIndex(left));
         }
         if (isOppositeStringDeath(right,player)){
-            stringlist.add(getStoneStringByIndex(right));
+            stringList.add(getStoneStringByIndex(right));
         }
             //stringlist=null;
 
-        return stringlist;
+        return stringList;
     }
 
     //判断当前位置的敌方棋串是否为死串
@@ -118,12 +118,12 @@ public class Board {
     public static boolean isOnBoard(Position index) {
         return index.getI()>=1&&index.getI()<=19&&index.getJ()>=1&&index.getJ()<=19;
     }
-    public void checkAirOfStone(Stone stone){
+  /*  public void checkAirOfStone(Stone stone){
 
     }
     public void checkAirOfStoneString(StoneString stoneString){
 
-    }
+    }*/
 
 
 

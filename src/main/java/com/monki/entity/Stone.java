@@ -154,7 +154,7 @@ public class Stone implements Serializable {
 
     @Override
     public String toString() {
-        String player =color==Color.BLACK?"黑":"白";
+        String player =color.equals(Color.BLACK)?"黑":"白";
         return "棋子{" +count+
                 ", 对局方=" + player+
                 ", 图形学坐标=" + index +
