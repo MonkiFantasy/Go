@@ -2,6 +2,8 @@ package com.monki.draw;
 
 import com.monki.core.Board;
 import com.monki.core.StoneString;
+import com.monki.test.StoneClient;
+import com.monki.test.StoneServer;
 import com.monki.util.Calculator;
 import com.monki.util.Config;
 import com.monki.entity.Position;
@@ -36,17 +38,20 @@ public class MyPanel extends JPanel {
     //Logger logger =Logger.getLogger("panel");
     //private Board board= new Board();
     //private static Stone[][] stones=Board.stones;//存放棋盘上落得子
-    private JButton dialog;
+    private JButton menu;
     private  JButton musicPlayer;
     private JPanel textPanel;
-    private JTextArea text;
+    private static JTextArea text;
     private static Clip clip;
+    private JFrame myFrame;
 
 
-    public MyPanel() {
+    public MyPanel(JFrame frame) {
+        myFrame=frame;
         initMusic();
         initPanel();
         initListener();
+
     }
 
 
@@ -92,56 +97,66 @@ public class MyPanel extends JPanel {
                 Position index = Calculator.getIndexViaMouse(e.getX(), e.getY());
                 Position coordinate = Calculator.getCoordinateViaIndex(index.getI(), index.getJ());
                 Stone stone = new Stone(count, turn == -1 ? Color.BLACK : Color.WHITE, coordinate, index);
-                //判断落子是否合法
-                if (isValidStone(index,stone)) {
-                    //先更新棋盘的状态
-                    stone.checkLiberty();
-                    Board.stones[index.getJ()][index.getI()] = stone;//1
-                    Board.state[index.getJ()][index.getI()] = turn;//2
-                    //落子后更新敌方棋串的气坐标
-                    if (turn == -1) {
-                        for (StoneString stoneString : Board.whiteString) {
-                            stoneString.updateLiberty(index);
+                //网络传送棋子
+                if(Config.MODE==0){
+                    //判断落子是否合法(重复落子，自杀，全局同形）
+                    if (isValidStone(index,stone)) {
+                        //落子合法，执行落子逻辑
+                        updateStone(stone);
+                    }
+                }else if(Config.MODE==1){
+                    //TODO:实现网络传输
+                    //从服务器获取当前方是否为服务器(黑)
+                    Boolean isServer=Config.SERVER;
+                    //从服务器获取当前方是黑棋还是白棋
+                    //int player=1;
+                    //获取当前落子方是黑棋还是白棋，是当前方落子:执行落子逻辑updateStone，发送棋子到对方
+                    if(isServer){
+                        /*if(count==1){
+                            new Thread(new StoneServer()).start();
+                        }*/
+                        if (turn==-1){
+                            //是当前方落子
+                            if(isValidStone(index,stone)){
+                                updateStone(stone);
+                                StoneServer.currentStone=stone;
+                            }
+
+                        }else if(turn==1){
+                            //是对方落子
+                            if(isValidStone(index,stone)){
+                                stone=StoneServer.currentStone;
+                                updateStone(stone);
+                            }
                         }
-                    } else if (turn == 1) {
-                        for (StoneString stoneString : Board.blackString) {
-                            stoneString.updateLiberty(index);
+                    }else{
+                        /*if(count==1){
+                            new Thread(new StoneClient()).start();
+                        }*/
+                        //是客户端，白棋
+                        if(turn==1){
+                            if(isValidStone(index,stone)){
+                                updateStone(stone);
+                                StoneClient.currentStone=stone;
+                                //notify();
+                            }
+                        } else if (turn==-1) {
+                            if(isValidStone(index,stone)){
+                                stone=StoneClient.currentStone;
+                                //TODO
+                                //if(stone==null) return;
+                                updateStone(stone);
+                            }
                         }
                     }
-                    //更新对方棋串的气，若为0则提掉
-                    removeOppositeDeathString(index);
-                    //重新判断当前棋子的气
-                    stone.checkLiberty();
-                    Board.stones[index.getJ()][index.getI()] = stone;
-                    //连接棋串
-                    Board.connectString(stone, turn);
-                    //添加棋子到已落下的棋盘上
-                    //fallOn.add(stone);//把它融合进了connectString
-                    //数组的坐标与棋盘图像绘制的坐标相反，更新棋盘状态
-/*                    if (isAppeared(index)) {
-                        new WarningDialog("违反了禁全局同形规则，\n请到别处落子");
-                        //TODO：恢复棋盘到落子前状态
-                        Board.state[index.getJ()][index.getI()] = 0;
-                        Board.stones[index.getJ()][index.getI()] = null;
-                        fallOn.remove(count-1);
-                        return;
-                    }*/
-
-
-                    //TODO：添加当前棋盘状态到history
-                    //System.out.println(Board.state.toString());
-                    Board.history.add(Calculator.deepCopy(Board.state));
-
-                    text.setText("当前落子方："+(turn==-1?"白":"黑"));
-                    //轮次更新
-                    turn = -turn;//更新当前棋手
-                    count++;//落子手数增加
                 }
+
+
+
                 MyLogger.log("count" + count, this.getClass());
 
 
-                //TODO：重绘当前落下棋子区域
-                //repaint();
+                //重绘当前落下棋子区域
                 repaint(coordinate.getI() - Config.SPACE / 2, coordinate.getJ() - Config.SPACE / 2, SPACE * 2, SPACE * 2);
                 //System.out.println(stone.toString());
                 //日志输出Board.state[][]
@@ -154,13 +169,44 @@ public class MyPanel extends JPanel {
         }
     }
 
-    private void removeOppositeDeathString(Position index) {
+    public static void updateStone(Stone stone) {
+        Position index = stone.getIndex();
+        //先更新棋盘的状态
+        stone.checkLiberty();
+        Board.stones[index.getJ()][index.getI()] = stone;//1
+        Board.state[index.getJ()][index.getI()] = turn;//2
+        //落子后更新敌方棋串的气坐标
+        if (turn == -1) {
+            for (StoneString stoneString : Board.whiteString) {
+                stoneString.updateLiberty(index);
+            }
+        } else if (turn == 1) {
+            for (StoneString stoneString : Board.blackString) {
+                stoneString.updateLiberty(index);
+            }
+        }
+        //更新对方棋串的气，若为0则提掉
+        removeOppositeDeathString(index);
+        //重新判断当前棋子的气
+        stone.checkLiberty();
+        Board.stones[index.getJ()][index.getI()] = stone;
+        //连接棋串
+        Board.connectString(stone, turn);
+        Board.history.add(Calculator.deepCopy(Board.state));
+
+        text.setText("请"+(turn==-1?"白":"黑")+"方落子 当前手数："+count);
+        //轮次更新
+        turn = -turn;//更新当前棋手
+        count++;//落子手数增加
+    }
+
+    private static void removeOppositeDeathString(Position index) {
         //提子逻辑
         //获取要被移除的敌方棋串
         //TODO：修复getStonesToRemove方法，貌似因为落子后未更新被堵住的气,里面的isOppositeStringDeath判断为false,
         // 导致不执行下面的if逻辑,执行这个逻辑前要先落子重新计算Board.stones棋子的气，和其中棋串的气
         List<StoneString> stoneStrings = Board.getStonesToRemove(index, turn);
-        if (stoneStrings != null) {
+        if (!stoneStrings.isEmpty()) {
             //找到被提的棋串，设置其中每个棋子isRemoved属性为true，删除棋串
             stoneStrings.forEach(stoneString -> {
                 Set<Stone> stones = stoneString.getStones();
@@ -207,6 +253,12 @@ public class MyPanel extends JPanel {
 
     private boolean isValidStone(Position index,Stone stone) {
         //TODO:实现判断落子合法性
+        //当前落子颜色与轮次颜色不同
+        if((stone.getColor().equals(Color.WHITE)&&Config.SERVER)||(stone.getColor().equals(Color.BLACK)&&!Config.SERVER)){
+            MyLogger.log("不是你的回合", this.getClass());
+            new WarningDialog("不是你的回合，请等待对方落子");
+            return false;
+        }
         //当前坐标已落子
         if (Board.state[index.getJ()][index.getI()] != 0) {
             MyLogger.log("当前坐标已落子，请到别处落子", this.getClass());
@@ -431,8 +483,8 @@ public class MyPanel extends JPanel {
         setLayout(null);
         setBounds(0, 0, 1920, 1080);
         setBackground(Color.gray);
-        dialog = new MyButton("进入连接界面");
-        dialog.setBounds(X+LENGTH + SPACE, Y , SPACE * 5, (int) (SPACE*1.2));
+        menu = new MyButton("主菜单");
+         menu.setBounds(X+LENGTH + SPACE, Y , SPACE * 5, (int) (SPACE*1.2));
         textPanel = new BackgroundPanel("/img/img_1.png");
         textPanel.setToolTipText("15351");
         //textPanel = new JPanel();
@@ -449,7 +501,7 @@ public class MyPanel extends JPanel {
         musicPlayer = new MyButton("背景音乐：关");
         musicPlayer.setBounds(X + SPACE +LENGTH, Y+SPACE*2, SPACE * 5, (int) (SPACE*1.2));
         setDoubleBuffered(true);
-        add(dialog);
+        add(menu);
         add(musicPlayer);
         textPanel.add(text);
         add(textPanel);
@@ -480,10 +532,12 @@ public class MyPanel extends JPanel {
             }
         });
         //弹出连接对话框
-        dialog.addActionListener(new ActionListener() {
+        menu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ConnectDialog();
+                myFrame.remove(MyFrame.myPanel);
+                myFrame.setBounds(710,290,500,500);
+                myFrame.add(MyFrame.startPanel);
             }
         });
         musicPlayer.addActionListener(new ActionListener() {

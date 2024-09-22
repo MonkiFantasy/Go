@@ -1,5 +1,6 @@
 package com.monki.test;
 
+import com.monki.draw.MyPanel;
 import com.monki.entity.Position;
 import com.monki.entity.Stone;
 import com.monki.util.Calculator;
@@ -7,30 +8,62 @@ import com.monki.util.Calculator;
 import java.awt.*;
 import java.io.*;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.sql.Time;
 
-public class StoneClient {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+public class StoneClient implements Runnable{
+    public static volatile Stone currentStone;
+    public static Boolean isCurrentTurn;
+
+    public static void main(String[] args) {
+        new Thread(new StoneServer()).start();
+        new Thread(new StoneClient()).start();
+    }
+
+    private static Stone receiveStone(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        Stone receivedStone = (Stone) ois.readObject();
+        System.out.println("从服务器接收到的棋子: " + receivedStone);
+        return receivedStone;
+    }
+
+    private static void sendStone(ObjectOutputStream oos,Stone stone) throws IOException {
+        oos.writeObject(stone); // 发送Stone对象到服务器
+        oos.flush(); // 确保对象被发送
+        System.out.println("发送棋子成功"+stone);
+    }
+
+    @Override
+    public void run() {
         String host = "localhost"; // 服务器地址
-        int port = 12345; // 服务器端口
-        int count = 2;//初始为白方
+        int port = 12345; // 服务器监听端口
+        //Stone test = new Stone(0, Color.BLACK, new Position(0, 0), new Position(0, 0));
+
         try (Socket socket = new Socket(host, port);
              ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
-
+            //客户端，默认为白方
             while (true) {
-                    Stone receivedStone = (Stone) ois.readObject();
-                    System.out.println("从服务器接收到的棋子: " + receivedStone);
-                    count = receivedStone.getCount() + 1;
-                    //发送棋子
-                    Stone stone = new Stone(count, Color.BLACK, new Position(4, 4), Calculator.getCoordinateViaIndex(4, 4)); // 创建一个Stone对象
-                    oos.writeObject(stone); // 发送Stone对象到服务器
-                    oos.flush(); // 确保对象被发送
-                    System.out.println("发送了棋子"+stone);
-                    Thread.sleep(1000);
+                //接收棋子
+                Stone stone = receiveStone(ois);
+                //System.out.println("收到"+stone);
+                //break;
+                currentStone = stone;
+                MyPanel.updateStone(stone);
+                //发送棋子
+                //TODO:在这里要改变currentStone
+                // 的值，虽然点击时已经被改变，但是下次循环执行时又被还原成收到的棋子
+
+                while (currentStone.getColor().equals(Color.BLACK)){
+                    //wait();
+                }
+                sendStone(oos,currentStone);
             }
 
-        } catch (InterruptedException e) {
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

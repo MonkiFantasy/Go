@@ -70,7 +70,7 @@ public class MyPaint {
         RadialGradientPaint p = new RadialGradientPaint(
                 stone.getCoordinate().getI()- (float) SPACE /6,stone.getCoordinate().getJ()- (float) SPACE /6 , (float) SPACE /3 ,
                 new float[]{0.0f, 1.0f},
-                stone.getColor()==Color.BLACK?blackGradient:whiteGradient,
+                stone.getColor().equals(Color.BLACK)?blackGradient:whiteGradient,
                 RadialGradientPaint.CycleMethod.NO_CYCLE
 
         );

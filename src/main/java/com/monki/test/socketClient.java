@@ -14,7 +14,9 @@ public class socketClient {
         Socket socket = new Socket(InetAddress.getByName("127.0.0.1"), 8888);
         OutputStream outputStream = socket.getOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-        objectOutputStream.writeObject(new Stone(1,Color.BLACK, new Position(4,4), Calculator.getCoordinateViaIndex(4,4)));
+        Stone stone = new Stone(1,Color.BLACK, new Position(4,4), Calculator.getCoordinateViaIndex(4,4));
+        objectOutputStream.writeObject(stone);
+        System.out.println("发送棋子成功"+stone);
         socket.shutdownOutput();
 
         /*InputStream inputStream = socket.getInputStream();
