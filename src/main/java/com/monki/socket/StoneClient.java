@@ -14,10 +14,11 @@ import java.sql.Time;
 public class StoneClient implements Runnable{
     public static volatile Stone currentStone;
     public static Boolean isCurrentTurn;
-
-    public static void main(String[] args) {
-        new Thread(new StoneServer()).start();
-        new Thread(new StoneClient()).start();
+    private int port;
+    private String ip;
+    public StoneClient(String ip, int port){
+        this.ip=ip;
+        this.port=port;
     }
 
     private static Stone receiveStone(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -34,8 +35,8 @@ public class StoneClient implements Runnable{
 
     @Override
     public void run() {
-        String host = "localhost"; // 服务器地址
-        int port = 12345; // 服务器监听端口
+        String host = ip; // 服务器地址
+         // 服务器监听端口
         //Stone test = new Stone(0, Color.BLACK, new Position(0, 0), new Position(0, 0));
 
         try (Socket socket = new Socket(host, port);

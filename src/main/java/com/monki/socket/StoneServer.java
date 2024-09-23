@@ -13,7 +13,11 @@ import java.net.Socket;
 
 
 public class StoneServer implements Runnable{
+    private int port;
     public static volatile Stone currentStone;
+    public StoneServer(int listeningPort){
+        this.port = listeningPort;
+    }
 
     private static Stone receiveStone(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         Stone receivedStone = (Stone) ois.readObject();
@@ -28,7 +32,7 @@ public class StoneServer implements Runnable{
 
     @Override
     public void run() {
-        int port = 12345; // 服务器监听的端口
+        //int port = 12345; // 服务器监听的端口
         Stone test = new Stone(0, Color.BLACK, new Position(0, 0), new Position(0, 0));
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             //等待连接建立
