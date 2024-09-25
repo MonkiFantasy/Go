@@ -1,15 +1,14 @@
-package com.monki.test;
+package com.monki.socket;
 
+import com.monki.draw.MyFrame;
 import com.monki.draw.MyPanel;
-import com.monki.entity.Position;
 import com.monki.entity.Stone;
-import com.monki.util.Calculator;
+import com.monki.util.Config;
 
 import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.sql.Time;
 
 public class StoneClient implements Runnable{
     public static volatile Stone currentStone;
@@ -50,6 +49,9 @@ public class StoneClient implements Runnable{
                 //break;
                 currentStone = stone;
                 MyPanel.updateStone(stone);
+                MyFrame.myPanel.repaint();
+
+
                 //发送棋子
                 //TODO:在这里要改变currentStone
                 // 的值，虽然点击时已经被改变，但是下次循环执行时又被还原成收到的棋子

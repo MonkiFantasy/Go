@@ -22,13 +22,19 @@ public class StartPanel extends JPanel {
         offline.addActionListener(e -> {
             Config.MODE=0;
             myframe.remove(MyFrame.startPanel);
+            //MyFrame.startPanel.setVisible(false);
             myframe.setBounds(0,0,1880,950);
             myframe.add(MyFrame.myPanel);
+            //myframe.revalidate();
+            myframe.repaint();
         });
         online.addActionListener(e -> {
             Config.MODE=1;
             myframe.remove(MyFrame.startPanel);
+            MyFrame.startPanel.setVisible(false);
             myframe.add(MyFrame.connectPanel);
+            //myframe.revalidate();
+            myframe.repaint();
             //WarningDialog warningDialog = new WarningDialog("正在开发中，敬请期待。。。");
             //int width=warningDialog.getWidth();
             //int height=warningDialog.getHeight();
@@ -46,7 +52,7 @@ public class StartPanel extends JPanel {
         online.setBounds(150,200,200,50);
         add(offline);
         add(online);
-        setVisible(true);
+        //setVisible(true);
     }
 
     @Override

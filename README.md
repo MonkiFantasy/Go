@@ -8,14 +8,9 @@
 
 ## 难点：围棋相关规则的实现
 
-- 建立棋串的气数组 -1棋盘初始状态 0无气点（无气，可能是禁入点或打劫） 数字 
 - 提子 
-
-- 悔棋 
-
 - 打劫 
-
-- 禁入点 （包括自杀点）
+- 禁入点 
 
  ## 核心规则实现思路
 
@@ -65,15 +60,24 @@ int[][] air_black=new int[PATH+1][PATH+1];
 
 ## 项目结构
 
+- core 核心类
+  - Board用于保存棋盘上的状态
 - draw 用于界面的绘制
   - MyFrame 绘制窗口
   - Mypanel 绘制棋盘，控制事件监听
   - Mypaint 存放绘制围棋相关的相关方法
+  - BackgroundPanel 用于绘制背景图片
+  - ConnectPanel 用于判断是客户端还是服务器
+  - ConnectDialog 创建连接弹窗
+  - MyButton 创建自定义的按钮
+  - StartPanel 开始界面
+  - WarningDialog 警告弹窗
 - entity 实体类
   - Position 用于记录坐标
   - Stone用于存储棋子信息
 - socket 用于实现网络通信
-
+  - StoneServer 棋子服务器（黑方）
+  - StoneClient 棋子客户端年（白方）
 - util工具类
   - Calculator 用于各种坐标的计算
   - Config 用于存储程序所用到的常量

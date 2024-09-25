@@ -1,7 +1,7 @@
 package com.monki.draw;
 
-import com.monki.test.StoneClient;
-import com.monki.test.StoneServer;
+import com.monki.socket.StoneClient;
+import com.monki.socket.StoneServer;
 import com.monki.util.Config;
 
 import javax.imageio.ImageIO;
@@ -9,10 +9,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
+import static com.monki.draw.MyFrame.connectDialog;
+
 public class ConnectPanel extends JPanel {
 
     private MyButton offline;
     private MyButton online;
+    //private ConnectDialog connectDialog;
 
     public ConnectPanel(JFrame myframe){
         initPanel();
@@ -24,18 +27,43 @@ public class ConnectPanel extends JPanel {
         offline.addActionListener(e -> {
             Config.SERVER=true;
             //new Thread(new StoneServer()).start();
-            myframe.remove(MyFrame.connectPanel);
-            myframe.setBounds(0,0,1880,950);
-            myframe.add(MyFrame.myPanel);
-            new Thread(new StoneServer()).start();
+            //TODO:弹窗获取ip端口号，根据ip端口号创建服器和客户端
+
+            Boolean condition = (ConnectDialog.port!=0);
+            if(condition){
+                myframe.remove(MyFrame.connectPanel);
+                myframe.setBounds(0,0,1880,950);
+                myframe.add(MyFrame.myPanel);
+                myframe.repaint();
+                new Thread(new StoneServer(ConnectDialog.port)).start();
+            }else {
+                myframe.remove(MyFrame.connectPanel);
+                myframe.add(connectDialog);
+                myframe.repaint();
+                //connectDialog.setVisible(true);
+            }
+
+            //new Thread(new StoneServer(12345)).start();
         });
         online.addActionListener(e -> {
             Config.SERVER=false;
             //new Thread(new StoneClient()).start();
-            myframe.remove(MyFrame.connectPanel);
-            myframe.setBounds(0,0,1880,950);
-            myframe.add(MyFrame.myPanel);
-            new Thread(new StoneClient()).start();
+
+            //ConnectDialog connectDialog = new ConnectDialog();
+            Boolean condition = (ConnectDialog.ip!=null&&ConnectDialog.port!=0);
+
+            if(condition){
+                myframe.remove(MyFrame.connectPanel);
+                myframe.setBounds(0,0,1880,950);
+                myframe.add(MyFrame.myPanel);
+                myframe.repaint();
+                new Thread(new StoneClient(ConnectDialog.ip,ConnectDialog.port)).start();
+            }else {
+                myframe.remove(MyFrame.connectPanel);
+                myframe.add(connectDialog);
+                myframe.repaint();
+                //connectDialog.setVisible(true);
+            }
             //WarningDialog warningDialog = new WarningDialog("正在开发中，敬请期待。。。");
             //int width=warningDialog.getWidth();
             //int height=warningDialog.getHeight();
@@ -53,7 +81,8 @@ public class ConnectPanel extends JPanel {
         online.setBounds(150,200,200,50);
         add(offline);
         add(online);
-        setVisible(true);
+
+        //setVisible(true);
     }
 
     @Override

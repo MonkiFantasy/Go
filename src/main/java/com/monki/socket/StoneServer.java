@@ -1,8 +1,8 @@
-package com.monki.test;
+package com.monki.socket;
+import com.monki.draw.MyFrame;
 import com.monki.draw.MyPanel;
 import com.monki.entity.Position;
 import com.monki.entity.Stone;
-import com.monki.util.Calculator;
 
 import java.awt.*;
 import java.io.*;
@@ -55,6 +55,7 @@ public class StoneServer implements Runnable{
                     //接收棋子
                     currentStone = receiveStone(ois);
                     MyPanel.updateStone(currentStone);
+                    MyFrame.myPanel.repaint();
 
                 }
             } catch (ClassNotFoundException e) {

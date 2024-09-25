@@ -10,6 +10,7 @@ public class MyFrame extends JFrame {
     public static JPanel myPanel;
     public static JPanel startPanel;
     public static JPanel connectPanel;
+    public static JPanel connectDialog;
 
     public MyFrame(String title){
             initFrame(title);
@@ -19,6 +20,7 @@ public class MyFrame extends JFrame {
         myPanel = new MyPanel(this);
         startPanel = new StartPanel(this);
         connectPanel = new ConnectPanel(this);
+        connectDialog = new ConnectDialog(this);
         //frame
         //Container contentPane = getContentPane();
         //add(myPanel);

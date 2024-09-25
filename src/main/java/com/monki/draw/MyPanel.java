@@ -2,8 +2,8 @@ package com.monki.draw;
 
 import com.monki.core.Board;
 import com.monki.core.StoneString;
-import com.monki.test.StoneClient;
-import com.monki.test.StoneServer;
+import com.monki.socket.StoneClient;
+import com.monki.socket.StoneServer;
 import com.monki.util.Calculator;
 import com.monki.util.Config;
 import com.monki.entity.Position;
@@ -16,13 +16,11 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class MyPanel extends JPanel {
     public static final int X = Config.X;//棋盘左上角顶点x坐标
@@ -42,7 +40,7 @@ public class MyPanel extends JPanel {
     private  JButton musicPlayer;
     private JPanel textPanel;
     private static JTextArea text;
-    private static Clip clip;
+    private Clip clip;
     private JFrame myFrame;
 
 
@@ -70,18 +68,26 @@ public class MyPanel extends JPanel {
         myPaint.drawLines(g);
         myPaint.drawIndex(g);
         myPaint.drawStars(g);
-        //实现落子高亮效果
+        //实现落子提示效果
         if (mouseOn != null) {
-            g.setColor(Color.RED);
+            g.setColor(Color.BLUE);
             g.drawRect(mouseOn.getI() - Config.SPACE / 2, mouseOn.getJ() - Config.SPACE / 2, SPACE, SPACE);
         }
         //落子实现
         if (!fallOn.isEmpty()) {
             g.setColor(Color.BLACK);
-            Boolean isBlack = true;
+            //Boolean isBlack = true;
             for (Stone stone : fallOn) {
                 if (!stone.getRemoved()) {
                     myPaint.drawStone(g, stone);
+                    //落子焦点
+                    if(stone.getCount()==(fallOn.size())){
+                        g.setColor(Color.RED);
+                        g.fillOval(stone.getCoordinate().getI()-Config.SPACE/8,stone.getCoordinate().getJ()-Config.SPACE/8,SPACE/4,SPACE/4);
+                    }
+                    //绘制手数
+                    //g.setColor(stone.getColor().equals(Color.WHITE)?Color.BLACK:Color.WHITE);
+                    //g.drawString(String.valueOf(stone.getCount()), stone.getCoordinate().getI()-Config.SPACE/8,stone.getCoordinate().getJ()+Config.SPACE/8);
                 }
             }
         }
@@ -103,6 +109,7 @@ public class MyPanel extends JPanel {
                     if (isValidStone(index,stone)) {
                         //落子合法，执行落子逻辑
                         updateStone(stone);
+                        repaint();
                     }
                 }else if(Config.MODE==1){
                     //TODO:实现网络传输
@@ -119,14 +126,15 @@ public class MyPanel extends JPanel {
                             //是当前方落子
                             if(isValidStone(index,stone)){
                                 updateStone(stone);
+                                //repaint();
                                 StoneServer.currentStone=stone;
                             }
 
                         }else if(turn==1){
-                            //是对方落子
+                            //是对方落子,不该当前方落子，弹窗
                             if(isValidStone(index,stone)){
-                                stone=StoneServer.currentStone;
-                                updateStone(stone);
+                                //stone=StoneServer.currentStone;
+                                //updateStone(stone);
                             }
                         }
                     }else{
@@ -141,11 +149,12 @@ public class MyPanel extends JPanel {
                                 //notify();
                             }
                         } else if (turn==-1) {
+                            //是对方落子,不该当前方落子，弹窗
                             if(isValidStone(index,stone)){
-                                stone=StoneClient.currentStone;
+                                //stone=StoneClient.currentStone;
                                 //TODO
                                 //if(stone==null) return;
-                                updateStone(stone);
+                                //updateStone(stone);
                             }
                         }
                     }
@@ -193,7 +202,7 @@ public class MyPanel extends JPanel {
         //连接棋串
         Board.connectString(stone, turn);
         Board.history.add(Calculator.deepCopy(Board.state));
-
+        //repaint();
         text.setText("请"+(turn==-1?"白":"黑")+"方落子 当前手数："+count);
         //轮次更新
         turn = -turn;//更新当前棋手
@@ -254,7 +263,7 @@ public class MyPanel extends JPanel {
     private boolean isValidStone(Position index,Stone stone) {
         //TODO:实现判断落子合法性
         //当前落子颜色与轮次颜色不同
-        if((stone.getColor().equals(Color.WHITE)&&Config.SERVER)||(stone.getColor().equals(Color.BLACK)&&!Config.SERVER)){
+        if(Config.MODE==1&&((stone.getColor().equals(Color.WHITE)&&Config.SERVER)||(stone.getColor().equals(Color.BLACK)&&!Config.SERVER))){
             MyLogger.log("不是你的回合", this.getClass());
             new WarningDialog("不是你的回合，请等待对方落子");
             return false;
@@ -510,14 +519,16 @@ public class MyPanel extends JPanel {
     public void initMusic(){
         try {
             System.out.println("当前工作目录：" + System.getProperty("user.dir"));
-            AudioInputStream bgm = AudioSystem.getAudioInputStream(this.getClass().getResourceAsStream("/music/弈.wav"));
+            AudioInputStream bgm = AudioSystem.getAudioInputStream(new BufferedInputStream(this.getClass().getResourceAsStream("/music/Go.wav")));
             clip = AudioSystem.getClip();
             clip.open(bgm);
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+            ex.printStackTrace();
             throw new RuntimeException(ex);
         }
     }
     private void initListener() {
+
         //鼠标点击监听（落子监听）
         addMouseListener(new MyMouseListener());
         addMouseMotionListener(new MouseMotionAdapter() {

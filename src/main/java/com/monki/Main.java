@@ -1,5 +1,6 @@
 package com.monki;
 
+import com.monki.draw.ConnectDialog;
 import com.monki.draw.MyFrame;
 import com.monki.draw.MyPaint;
 import com.monki.draw.WarningDialog;
@@ -11,6 +12,7 @@ public class Main {
     public static void main(String[] args) {
         //Logger logger = Logger.getLogger("MyLogger");
         new MyFrame("奇弈围棋");
+        //new ConnectDialog();
         //new WarningDialog("sfdsf");
     }
 }
