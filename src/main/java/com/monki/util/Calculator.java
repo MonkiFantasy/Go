@@ -70,5 +70,16 @@ public class Calculator {
 
         return copy;
     }
+    public static String getAlphaIndex(Position index) {
+        for (int i = 1; i <= 19; i++) {
+            for (int j = 1; j <= 19; j++) {
+                if (index.getI() == i && index.getJ() == j) {
+                    return (char) ('a' + i - 1) +String.valueOf((char)('a'+j-1));
+                }
+            }
+
+        }
+        return "empty";
+    }
 
 }

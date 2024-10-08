@@ -4,6 +4,7 @@ import com.monki.core.Board;
 import com.monki.core.StoneString;
 import com.monki.socket.StoneClient;
 import com.monki.socket.StoneServer;
+import com.monki.util.FileSaver;
 import com.monki.util.Calculator;
 import com.monki.util.Config;
 import com.monki.entity.Position;
@@ -38,6 +39,7 @@ public class MyPanel extends JPanel {
     //private static Stone[][] stones=Board.stones;//存放棋盘上落得子
     private JButton menu;
     private  JButton musicPlayer;
+    private JButton saveSGF;
     private JPanel textPanel;
     private static JTextArea text;
     private Clip clip;
@@ -70,20 +72,25 @@ public class MyPanel extends JPanel {
         myPaint.drawStars(g);
         //实现落子提示效果
         if (mouseOn != null) {
-            g.setColor(Color.BLUE);
-            g.drawRect(mouseOn.getI() - Config.SPACE / 2, mouseOn.getJ() - Config.SPACE / 2, SPACE, SPACE);
+            g.setColor(Color.RED);
+
+            g.fillRect(mouseOn.getI() - Config.SPACE / 4, mouseOn.getJ() - Config.SPACE / 4, SPACE/2, SPACE/2);
         }
         //落子实现
         if (!fallOn.isEmpty()) {
-            g.setColor(Color.BLACK);
+            //g.setColor(Color.BLACK);
             //Boolean isBlack = true;
             for (Stone stone : fallOn) {
                 if (!stone.getRemoved()) {
                     myPaint.drawStone(g, stone);
                     //落子焦点
                     if(stone.getCount()==(fallOn.size())){
-                        g.setColor(Color.RED);
-                        g.fillOval(stone.getCoordinate().getI()-Config.SPACE/8,stone.getCoordinate().getJ()-Config.SPACE/8,SPACE/4,SPACE/4);
+                        int i = stone.getCoordinate().getI();
+                        int j = stone.getCoordinate().getJ();
+                        //g.setColor(Color.BLUE);
+                        g.setColor(stone.getColor().equals(Color.WHITE)?Color.BLACK:Color.WHITE);
+                        g.fillPolygon(new int[]{i,i,i+Config.SPACE/2},new int[]{j,j+Config.SPACE/2,j}, 3);
+                        //g.fillOval(stone.getCoordinate().getI()-Config.SPACE/8,stone.getCoordinate().getJ()-Config.SPACE/8,SPACE/4,SPACE/4);
                     }
                     //绘制手数
                     //g.setColor(stone.getColor().equals(Color.WHITE)?Color.BLACK:Color.WHITE);
@@ -493,7 +500,7 @@ public class MyPanel extends JPanel {
         setBounds(0, 0, 1920, 1080);
         setBackground(Color.gray);
         menu = new MyButton("主菜单");
-         menu.setBounds(X+LENGTH + SPACE, Y , SPACE * 5, (int) (SPACE*1.2));
+        menu.setBounds(X+LENGTH + SPACE, Y , SPACE * 5, (int) (SPACE*1.2));
         textPanel = new BackgroundPanel("/img/img_1.png");
         textPanel.setToolTipText("15351");
         //textPanel = new JPanel();
@@ -509,9 +516,12 @@ public class MyPanel extends JPanel {
         text.setFont(new Font("宋体", Font.BOLD, 20));
         musicPlayer = new MyButton("背景音乐：关");
         musicPlayer.setBounds(X + SPACE +LENGTH, Y+SPACE*2, SPACE * 5, (int) (SPACE*1.2));
+        saveSGF = new MyButton("保存棋谱");
+        saveSGF.setBounds(X + SPACE +LENGTH+SPACE*6, Y, SPACE * 5, (int)(SPACE*1.2));
         setDoubleBuffered(true);
         add(menu);
         add(musicPlayer);
+        add(saveSGF);
         textPanel.add(text);
         add(textPanel);
         setVisible(true);
@@ -564,6 +574,37 @@ public class MyPanel extends JPanel {
                     source.setText("背景音乐：开");
                     source.setToolTipText("点击暂停");
                 }
+            }
+        });
+        saveSGF.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("(;GM[1]FF[4]CA[UTF-8]SZ[19];\n");
+                for (Stone stone : fallOn) {
+                    if (stone.getColor().equals(Color.BLACK)) {
+                        sb.append("B[");
+                        //sb.append(Calculator.getCoordinateViaIndex(stone.getIndex().getI(), stone.getIndex().getJ()));
+                        sb.append(Calculator.getAlphaIndex(stone.getIndex()));
+                        sb.append("]");
+                    } else if (stone.getColor().equals(Color.WHITE)) {
+                        sb.append("W[");
+                        sb.append(Calculator.getAlphaIndex(stone.getIndex()));
+                        sb.append("]");
+                        //sb.append(Calculator.getCoordinateViaIndex(stone.getIndex().getI(), stone.getIndex().getJ()));
+                    }
+                    if(stone.getCount()!=fallOn.size()){
+                       sb.append(";");
+                    }
+                }
+                sb.append(")");
+                try {
+                    FileSaver.save(sb.toString());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+
             }
         });
     }

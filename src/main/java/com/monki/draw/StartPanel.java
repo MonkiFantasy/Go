@@ -31,7 +31,7 @@ public class StartPanel extends JPanel {
         online.addActionListener(e -> {
             Config.MODE=1;
             myframe.remove(MyFrame.startPanel);
-            MyFrame.startPanel.setVisible(false);
+            //MyFrame.startPanel.setVisible(false);
             myframe.add(MyFrame.connectPanel);
             //myframe.revalidate();
             myframe.repaint();
