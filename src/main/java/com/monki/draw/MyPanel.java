@@ -294,7 +294,8 @@ public class MyPanel extends JPanel {
             new WarningDialog("违反了禁全局同形规则，\n请到别处落子");
             return false;
         }
-
+        //落子有效，说明棋局未终止
+        Config.GAMESTATUS=1;
         return true;
     }
 
@@ -556,9 +557,15 @@ public class MyPanel extends JPanel {
         menu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                myFrame.remove(MyFrame.myPanel);
-                myFrame.setBounds(710,290,500,500);
-                myFrame.add(MyFrame.startPanel);
+                //TODO:棋局结束前点击主菜单，退出切换模式会导致bug,退出要置零，并彻底清空棋盘状态
+                if(Config.GAMESTATUS==1){
+                    new WarningDialog("棋局尚未结束，你确定要退出吗？");
+                }else {
+                    myFrame.remove(MyFrame.myPanel);
+                    myFrame.setBounds(710,290,500,500);
+                    myFrame.add(MyFrame.startPanel);
+                }
+
             }
         });
         musicPlayer.addActionListener(new ActionListener() {

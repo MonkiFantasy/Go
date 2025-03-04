@@ -3,7 +3,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
   <jar>/home/monki/IdeaProjects/Go/out/artifacts/Go_jar/Go.jar</jar>
-  <outfile>/home/monki/IdeaProjects/Go/out/artifacts/Go_jar/Go_JRE_IN_SYSTEM.exe</outfile>
+  <outfile>/home/monki/IdeaProjects/Go/out/artifacts/Go_jar/Go_JRE_IN_CURRENT_PATH.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -15,10 +15,10 @@
   <manifest></manifest>
   <icon></icon>
   <jre>
-    <path>%JAVA_HOME%;%PATH%</path>
+    <path>./jre</path>
     <requiresJdk>false</requiresJdk>
     <requires64Bit>false</requires64Bit>
-    <minVersion>1.8</minVersion>
+    <minVersion></minVersion>
     <maxVersion></maxVersion>
   </jre>
 </launch4jConfig>

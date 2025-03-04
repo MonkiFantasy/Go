@@ -7,5 +7,6 @@ public class Config {
     public static final int PATH=19;//围棋路数
     public static final int SPACE=LENGTH/(PATH-1);
     public static int MODE=0;//对弈模式 0-单机对弈 1-联机对战
+    public static int GAMESTATUS=0;//状态判断 是否在进行棋局 0否 1是
     public static Boolean SERVER=null;
 }
